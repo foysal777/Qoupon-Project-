@@ -1,1 +1,121 @@
+from abc import ABC, abstractmethod
 
+class Person(ABC):
+    def __init__(self, id, name, age):
+        self.id = id
+        self.name = name
+        self.age = age
+
+    @abstractmethod
+    def get_details(self):
+        pass
+
+class Doctor(Person):
+    def __init__(self, id, name, age, specialization):
+        super().__init__(id, name, age)
+        self.specialization = specialization
+        self.patients = []
+
+    def get_details(self):
+        return f"Doctor: {self.name}, Age: {self.age}, Specialization: {self.specialization}"
+
+    def add_patient(self, patient):
+        self.patients.append(patient)
+
+class Patient(Person):
+    def __init__(self, id, name, age, disease):
+        super().__init__(id, name, age)
+        self.disease = disease
+        self.admitted = True
+
+    def get_details(self):
+        return f"Patient: {self.name}, Age: {self.age}, Disease: {self.disease}, Admitted: {self.admitted}"
+
+    def discharge(self):
+        self.admitted = False
+        print(f"{self.name} has been discharged.")
+
+class Nurse(Person):
+    def __init__(self, id, name, age, doctor):
+        super().__init__(id, name, age)
+        self.assigned_doctor = doctor
+
+    def get_details(self):
+        return f"Nurse: {self.name}, Age: {self.age}, Assigned to Dr. {self.assigned_doctor.name}"
+
+class Hospital:
+    def __init__(self, name):
+        self.name = name
+        self.doctors = []
+        self.patients = []
+        self.nurses = []
+
+    def register_doctor(self, doctor):
+        self.doctors.append(doctor)
+        print(f"Dr. {doctor.name} has been registered.")
+
+    def register_patient(self, patient):
+        self.patients.append(patient)
+        print(f"Patient {patient.name} has been registered.")
+
+    def register_nurse(self, nurse):
+        self.nurses.append(nurse)
+        print(f"Nurse {nurse.name} has been registered.")
+
+    def assign_patient_to_doctor(self, patient, doctor):
+        doctor.add_patient(patient)
+        print(f"Patient {patient.name} has been assigned to Dr. {doctor.name}.")
+
+    def discharge_patient(self, patient):
+        patient.discharge()
+    
+
+    def list_doctors(self):
+        print("\n--- Doctors ---")
+        for doctor in self.doctors:
+            print(doctor.get_details())
+
+    def list_patients(self):
+        print("\n--- Patients ---")
+        for patient in self.patients:
+            print(patient.get_details())
+
+    def list_nurses(self):
+        print("\n--- Nurses ---")
+        for nurse in self.nurses:
+            print(nurse.get_details())
+
+# Example Usage
+if __name__ == "__main__":
+    hospital = Hospital("City Hospital")
+
+    # Register Doctors
+    doctor1 = Doctor(101, "Rahim", 45, "Cardiologist")
+    doctor2 = Doctor(102, "Karim", 50, "Neurologist")
+    hospital.register_doctor(doctor1)
+    hospital.register_doctor(doctor2)
+
+    # Register Patients
+    patient1 = Patient(201, "Abul", 35, "Heart Disease")
+    patient2 = Patient(202, "Babul", 40, "Migraine")
+    hospital.register_patient(patient1)
+    hospital.register_patient(patient2)
+    
+    # Register Nurses
+    nurse1 = Nurse(301, "Fatima", 28, doctor1)
+    nurse2 = Nurse(302, "Ayesha", 32, doctor2)
+    hospital.register_nurse(nurse1)
+    hospital.register_nurse(nurse2)
+
+    # Assign Patients to Doctors
+    hospital.assign_patient_to_doctor(patient1, doctor1)
+    hospital.assign_patient_to_doctor(patient2, doctor2)
+
+    # List all
+    hospital.list_doctors()
+    hospital.list_patients()
+    hospital.list_nurses()
+
+    # Discharge a patient
+    hospital.discharge_patient(patient1)
+    hospital.list_patients()
